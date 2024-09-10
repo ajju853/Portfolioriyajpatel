@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riyaj Patel - Engineering Virtuoso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #ffff00;
+            --text-color: #ffffff;
+            --bg-color: #000033;
+            --card-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        header {
+            background-color: rgba(0, 0, 51, 0.8);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 10px 15px;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover::after { transform: translateX(0); }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px var(--primary-color); }
+            to { text-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--secondary-color); }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+        }
+
+        .section {
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .glow-effect {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.8) 0%, rgba(0, 255, 255, 0) 70%);
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        #contact { text-align: center; }
+
+        .contact-item { margin-bottom: 10px; }
+
+        .contact-item i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: var(--bg-color);
+            border: 4px solid var(--primary-color);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .left { left: 0; }
+        .right { left: 50%; }
+        .right::after { left: -16px; }
+
+        @media screen and (max-width: 600px) {
+            .timeline::after { left: 31px; }
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            .timeline-item::after { left: 15px; }
+            .right { left: 0%; }
+        }
+
+        #message { text-align: center; }
+
+        .message-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .typing-effect {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            height: 30px;
+        }
+
+        .cursor {
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        #message-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #message-form input,
+        #message-form textarea {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #message-form textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <header>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+            <a href="#skills">Skills</a>
+            <a href="#soft-skills">Soft Skills</a>
+            <a href="#certifications">Certifications</a>
+            <a href="#interests">Interests</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section id="about" class="section">
+            <h1>Riyaj Patel</h1>
+            <p>Supplier Quality Maestro | ISO 9001: 2015 Virtuoso | Six Sigma Green Belt Ninja | NDT LEVEL II Wizard</p>
+            <p>Orchestrating global supplier quality symphonies. Currently conducting a masterpiece of casting, machining, gear, and transmission harmony for John Deere.</p>
+            <p>Alumnus of the Bhagwant Institute of Technology - India</p>
+            <p>Pune, Maharashtra, India - Where Innovation Meets Tradition</p>
+        </section>
+
+        <section id="experience" class="section">
+            <h2>Professional Odyssey</h2>
+            <div class="timeline">
+                <div class="timeline-item left">
+                    <div class="card">
+                        <h3>Supplier Quality Alchemist</h3>
+                        <p>John Deere India Pvt. Ltd.</p>
+                        <p>2018 - Present</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="card">
+                        <h3>Quality Craftsman</h3>
+                        <p>Previous Company</p>
+                        <p>2015 - 2018</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="section">
+            <h2>Technical Arsenal</h2>
+            <div class="grid">
+                <div class="card">Lean Six Sigma Green Belt</div>
+                <div class="card">Radiographic Testing</div>
+                <div class="card">Magnetic Particle Testing</div>
+                <div class="card">Liquid Penetrant Testing</div>
+                <div class="card">Ultrasonic Testing</div>
+                <div class="card">Supplier Evaluation</div>
+                <div class="card">Gage R&R</div>
+                <div class="card">Casting</div>
+                <div class="card">Quality Control</div>
+                <div class="card">IATF 16949</div>
+                <div class="card">Supplier Quality</div>
+                <div class="card">Quality Management</div>
+                <div class="card">Manufacturing Engineering</div>
+                <div class="card">FMEA</div>
+                <div class="card">PPAP</div>
+                <div class="card">APQP</div>
+                <div class="card">SAP</div>
+                <div class="card">Measurement System Analysis</div>
+                <div class="card">PFMEA</div>
+                <div class="card">Process Capability</div>
+                <div class="card">Supplier Audits</div>
+                <div class="card">Teamcenter</div>
+                <div class="card">Process Audit</div>
+                <div class="card">Auditing</div>
+                <div class="card">Quality Assurance</div>
+                <div class="card">Inspection</div>
+                <div class="card">SPC</div>
+                <div class="card">NDT</div>
+                <div class="card">ISO 9001</div>
+            </div>
+        </section>
+
+        <section id="soft-skills" class="section">
+            <h2>Interpersonal Superpowers</h2>
+            <div class="grid">
+                <div class="card">Eloquent Communication</div>
+                <div class="card">Visionary Leadership</div>
+                <div class="card">Ingenious Problem Solving</div>
+                <div class="card">Synergistic Teamwork</div>
+                <div class="card">Chameleon-like Adaptability</div>
+                <div class="card">Time-bending Management</div>
+                <div class="card">Sherlock-level Critical Thinking</div>
+                <div class="card">Diplomatic Conflict Resolution</div>
+                <div class="card">Jedi-like Emotional Intelligence</div>
+                <div class="card">Master Negotiator</div>
+                <div class="card">Da Vinci-esque Creativity</div>
+                <div class="card">Decisive Action-taking</div>
+            </div>
+        </section>
+
+        <section id="certifications" class="section">
+            <h2>Badges of Honor</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>ASNT Central Certification Program Level II - Magnetic Particle Testing (ACCP-MT)</h3>
+                    <p>ASNT (The American Society for Nondestructive Testing)</p>
+                </div>
+                <div class="card">
+                    <h3>ASNT Central Certification Program Level II - Radiographic Testing (ACCP-RT)</h3>
+                    <p>ASNT (The American Society for Nondestructive Testing)</p>
+                </div>
+                <div class="card">
+                    <h3>ASNT Central Certification Program Level II - Ultrasonic Testing (ACCP-UT)</h3>
+                    <p>ASNT (The American Society for Nondestructive Testing)</p>
+                </div>
+                <div class="card">
+                    <h3>ASNT NDT Level II Certification - Liquid Penetrant Testing (PT) (ASNT-NDT2-PT)</h3>
+                    <p>ASNT (The American Society for Nondestructive Testing)</p>
+                </div>
+                <div class="card">
+                    <h3>Lean Six Sigma Green Belt</h3>
+                    <p>ISEL GLOBAL - Six Sigma Certification & PMP Certification Institute</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="interests" class="section">
+            <h2>Passion Projects & Curiosities</h2>
+            <div class="grid">
+                <div class="card">Advanced Robotics Tinkering</div>
+                <div class="card">4D Printing Exploration</div>
+                <div class="card">EV Modification Wizardry</div>
+                <div class="card">IoT Integration Sorcery</div>
+                <div class="card">Biomimetic Engineering Alchemy</div>
+                <div class="card">Space Tech Innovations Odyssey</div>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <h2>Quantum Entanglement Coordinates</h2>
+            <div class="contact-item"><i class="fas fa-envelope"></i> Email: riyaj.patel@quantumrealm.com</div>
+            <div class="contact-item"><i class="fas fa-phone"></i> Telepathy Hotline: +91 7387196057</div>
+            <div class="contact-item"><i class="fab fa-linkedin"></i> LinkedIn Nexus: <a href="https://www.linkedin.com/in/riyaj-patel-1a99b3150/" target="_blank">Riyaj Patel</a></div>
+            <div class="contact-item"><i class="fas fa-map-marker-alt"></i> Cosmic Coordinates: Pune, Maharashtra, India</div>
+        </section>
+
+        <section id="message" class="section">
+            <h2>Transmit a Thought-Wave</h2>
+            <div class="message-container">
+                <div class="typing-effect">
+                    <span id="typing-text"></span>
+                    <span class="cursor">|</span>
+                </div>
+                <form id="message-form">
+                    <input type="text" id="name" placeholder="Your Cosmic Identifier" required>
+                    <input type="email" id="email" placeholder="Your Quantum Email Address" required>
+                    <textarea id="message" placeholder="Compose Your Interdimensional Message" required></textarea>
+                    <button type="submit" class="submit-btn">Launch Transmission</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        particlesJS.load('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+                modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        const sections = document.querySelectorAll('.section');
+        const revealSection = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        const sectionObserver = new IntersectionObserver(revealSection, {
+            root: null,
+            threshold: 0.15,
+        });
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const cardContent = card.innerHTML;
+            const glowEffect = document.createElement('div');
+            glowEffect.classList.add('glow-effect');
+            card.appendChild(glowEffect);
+
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, {
+                    scale: 1.05,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+
+                gsap.to(glowEffect, {
+                    opacity: 1,
+                    scale: 1.5,
+                    duration: 0.4,
+                    ease: 'power2.out'
+                });
+
+                gsap.to(card, {
+                    color: '#00ffff',
+                    textShadow: '0 0 5px rgba(0, 255, 255, 0.7)',
+                    duration: 0.3
+                });
+
+                gsap.fromTo(card, 
+                    { boxShadow: '0 0 0 rgba(0, 255, 255, 0)' },
+                    { 
+                        boxShadow: '0 0 20px rgba(0, 255, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.4)', 
+                        duration: 0.3 
+                    }
+                );
+
+                card.style.zIndex = 10;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    scale: 1,
+                    color: '#ffffff',
+                    textShadow: 'none',
+                    boxShadow: '0 0 0 rgba(0, 255, 255, 0)',
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+
+                gsap.to(glowEffect, {
+                    opacity: 0,
+                    scale: 1,
+                    duration: 0.4,
+                    ease: 'power2.in'
+                });
+
+                card.style.zIndex = 1;
+            });
+
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                gsap.to(glowEffect, {
+                    left: x,
+                    top: y,
+                    duration: 0.1
+                });
+            });
+        });
+
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        timelineItems.forEach((item, index) => {
+            gsap.from(item, {
+                opacity: 0,
+                x: index % 2 === 0 ? -50 : 50,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 80%',
+                    end: 'bottom 20%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        });
+
+        const typingText = document.getElementById('typing-text');
+        const messages = [
+            "Let's collaborate on innovative projects!",
+            "Have a question? I'm here to help!",
+            "Reach out and let's create something amazing!",
+            "Your message could be the start of something big!"
+        ];
+        let messageIndex = 0;
+        let charIndex = 0;
+
+        function typeMessage() {
+            if (charIndex < messages[messageIndex].length) {
+                typingText.textContent += messages[messageIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(typeMessage, 50);
+            } else {
+                setTimeout(eraseMessage, 2000);
+            }
+        }
+
+        function eraseMessage() {
+            if (charIndex > 0) {
+                typingText.textContent = messages[messageIndex].substring(0, charIndex - 1);
+                charIndex--;
+                setTimeout(eraseMessage, 30);
+            } else {
+                messageIndex = (messageIndex + 1) % messages.length;
+                setTimeout(typeMessage, 500);
+            }
+        }
+
+        typeMessage();
+
+        const messageForm = document.getElementById('message-form');
+        messageForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('Form submitted:', {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            });
+            alert('Message sent successfully!');
+            messageForm.reset();
+        });
+    </script>
+</body>
+</html>
